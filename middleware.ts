@@ -1,33 +1,39 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextResponse, type NextRequest } from 'next/server'
+import { createClient } from '@/utils/supabase/middleware'
 
-export async function middleware(req: NextRequest) {
-  const res = NextResponse.next()
-  const supabase = createMiddlewareClient({ req, res })
-
+export async function middleware(request: NextRequest) {
   try {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
+    const { supabase, response } = createClient(request)
+    const { data: { session } } = await supabase.auth.getSession()
 
-    // If there's no session and the user is trying to access a protected route
-    if (!session && req.nextUrl.pathname.startsWith('/dashboard')) {
-      const redirectUrl = new URL('/auth/signin', req.url)
-      redirectUrl.searchParams.set('from', req.nextUrl.pathname)
-      return NextResponse.redirect(redirectUrl)
+    // Protected routes
+    if (request.nextUrl.pathname.startsWith('/dashboard')) {
+      if (!session) {
+        const redirectUrl = new URL('/auth/signin', request.url)
+        redirectUrl.searchParams.set('from', request.nextUrl.pathname)
+        return NextResponse.redirect(redirectUrl)
+      }
     }
 
-    return res
+    // Auth routes when already logged in
+    if (session && (
+      request.nextUrl.pathname.startsWith('/auth/signin') ||
+      request.nextUrl.pathname.startsWith('/auth/signup')
+    )) {
+      return NextResponse.redirect(new URL('/dashboard', request.url))
+    }
+
+    return response
   } catch (error) {
     console.error('Middleware error:', error)
-    return res
+    return NextResponse.next()
   }
 }
 
 export const config = {
   matcher: [
     '/dashboard/:path*',
-    '/auth/callback',
-  ],
-} 
+    '/auth/:path*',
+  ]
+}
+

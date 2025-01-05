@@ -1,9 +1,8 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createClient } from '@/utils/supabase/server'
 
 export async function getProjects() {
   try {
-    const supabase = createServerComponentClient({ cookies })
+    const supabase = createClient()
     
     const { data: { session } } = await supabase.auth.getSession()
     
@@ -32,7 +31,7 @@ export async function getProjects() {
 
 export async function getPublicProjects() {
   try {
-    const supabase = createServerComponentClient({ cookies })
+    const supabase = createClient()
     
     const { data: projects, error } = await supabase
       .from('projects')

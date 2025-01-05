@@ -10,8 +10,8 @@ export async function DELETE(
     const cookieStore = cookies()
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
     
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) {
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+    if (sessionError || !session) {
       return NextResponse.json(
         { error: 'Unauthorized' }, 
         { status: 401 }
@@ -19,22 +19,22 @@ export async function DELETE(
     }
 
     // Delete the project
-    const { error } = await supabase
+    const { error: deleteError } = await supabase
       .from('projects')
       .delete()
       .eq('id', params.id)
       .eq('user_id', session.user.id)
 
-    if (error) {
-      console.error('Error deleting project:', error)
+    if (deleteError) {
+      console.error('Error deleting project:', deleteError)
       return NextResponse.json(
-        { error: error.message },
+        { error: deleteError.message },
         { status: 500 }
       )
     }
 
     return NextResponse.json({ message: 'Project deleted successfully' })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error in DELETE /api/projects/[id]:', error)
     return NextResponse.json(
       { error: 'Internal Server Error' },

@@ -1,72 +1,52 @@
 'use client'
 
+import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
-import { Github, ExternalLink } from 'lucide-react'
-import Link from 'next/link'
+import { Project } from '@/types/database'
+import ProjectActions from './ProjectActions'
+import { scaleIn } from '@/lib/motion'
 
-interface Project {
-  id: string
-  title: string
-  description: string
-  image_url?: string
-  github_url?: string
-  live_url?: string
-  tags?: string[]
+interface ProjectCardProps {
+  project: Project
 }
 
-export default function ProjectCard({ project }: { project: Project }) {
+export default function ProjectCard({ project }: ProjectCardProps) {
   return (
-    <Card className="overflow-hidden group">
-      <div className="relative h-48 overflow-hidden">
-        <Image
-          src={project.image_url || '/placeholder-project.jpg'}
-          alt={project.title}
-          fill
-          className="object-cover transition-transform duration-300 group-hover:scale-110"
-        />
-      </div>
-      <CardHeader>
-        <div className="space-y-1">
-          <h3 className="text-2xl font-bold">{project.title}</h3>
+    <motion.div
+      variants={scaleIn}
+      whileHover={{ scale: 1.02 }}
+      className="bg-white rounded-lg shadow-md overflow-hidden"
+    >
+      {project.image_url && (
+        <div className="relative h-48">
+          <Image
+            src={project.image_url}
+            alt={project.title}
+            fill
+            className="object-cover"
+          />
+        </div>
+      )}
+      <div className="p-6">
+        <div className="flex justify-between items-start">
+          <h3 className="text-xl font-bold mb-2">{project.title}</h3>
+          <ProjectActions projectId={project.id} />
+        </div>
+        <p className="text-gray-600 mb-4">{project.description}</p>
+        {project.tags && (
           <div className="flex flex-wrap gap-2">
-            {project.tags?.map((tag) => (
-              <Badge key={tag} variant="secondary">
+            {project.tags.map((tag) => (
+              <span
+                key={tag}
+                className="px-2 py-1 bg-gray-100 rounded-full text-sm"
+              >
                 {tag}
-              </Badge>
+              </span>
             ))}
           </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <p className="text-muted-foreground">{project.description}</p>
-      </CardContent>
-      <CardFooter className="gap-4">
-        {project.github_url && (
-          <Link
-            href={project.github_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <Github className="h-4 w-4" />
-            Source
-          </Link>
         )}
-        {project.live_url && (
-          <Link
-            href={project.live_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ExternalLink className="h-4 w-4" />
-            Live Demo
-          </Link>
-        )}
-      </CardFooter>
-    </Card>
+      </div>
+    </motion.div>
   )
 }
 

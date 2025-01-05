@@ -13,8 +13,8 @@ export default function AuthProvider({
 }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const supabase = createClientComponentClient()
   const router = useRouter()
+  const supabase = createClientComponentClient()
 
   useEffect(() => {
     const {
@@ -23,7 +23,10 @@ export default function AuthProvider({
       setUser(session?.user ?? null)
       setIsLoading(false)
       if (event === 'SIGNED_IN') router.refresh()
-      if (event === 'SIGNED_OUT') router.refresh()
+      if (event === 'SIGNED_OUT') {
+        router.refresh()
+        router.push('/')
+      }
     })
 
     // Initial session check

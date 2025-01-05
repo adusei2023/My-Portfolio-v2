@@ -3,33 +3,47 @@
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
+import Link from 'next/link'
+import { slideUp, fadeIn, staggerContainer } from '@/lib/motion'
 
 export default function Hero() {
   return (
-    <div className="min-h-[60vh] flex flex-col justify-center items-center text-center py-20">
+    <section className="min-h-[80vh] flex flex-col justify-center items-center text-center py-20 px-4">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        initial="hidden"
+        animate="visible"
+        variants={staggerContainer}
+        className="max-w-4xl"
       >
-        <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-          Welcome to My Portfolio
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mb-8">
-          Exploring the intersection of design and development. Check out my latest projects
-          and see how I bring ideas to life through code.
-        </p>
-        <div className="flex gap-4 justify-center">
+        <motion.h1 
+          variants={slideUp}
+          className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent"
+        >
+          Turning Ideas Into Digital Reality
+        </motion.h1>
+        
+        <motion.p 
+          variants={fadeIn}
+          className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8"
+        >
+          Full-stack developer specializing in building exceptional digital experiences. 
+          Explore my latest projects and see how I bring ideas to life through code.
+        </motion.p>
+        
+        <motion.div 
+          variants={slideUp}
+          className="flex gap-4 justify-center"
+        >
           <Button size="lg" asChild>
-            <a href="#projects">
+            <Link href="#projects">
               View Projects <ArrowRight className="ml-2 h-5 w-5" />
-            </a>
+            </Link>
           </Button>
           <Button size="lg" variant="outline" asChild>
-            <a href="/contact">Get in Touch</a>
+            <Link href="/contact">Get in Touch</Link>
           </Button>
-        </div>
+        </motion.div>
       </motion.div>
-    </div>
+    </section>
   )
 } 

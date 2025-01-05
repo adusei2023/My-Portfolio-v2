@@ -8,38 +8,41 @@ import { Input } from '@/components/ui/input'
 import { GithubIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import Image from 'next/image'
+import Link from 'next/link'
 import type { Database } from '@/types/supabase'
 
-export default function SignIn() {
+export default function SignUp() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const supabase = createClientComponentClient<Database>()
 
-  const handleEmailSignIn = async (e: React.FormEvent) => {
+  const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
       })
 
       if (error) throw error
 
-      toast.success('Signed in successfully')
-      router.refresh()
-      router.push('/dashboard')
+      toast.success('Check your email to confirm your account')
+      router.push('/auth/verify-email')
     } catch (error: any) {
-      toast.error(error.message || 'Failed to sign in')
+      toast.error(error.message || 'Failed to sign up')
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleOAuthSignIn = async (provider: 'github' | 'google') => {
+  const handleOAuthSignUp = async (provider: 'github' | 'google') => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
@@ -50,22 +53,22 @@ export default function SignIn() {
 
       if (error) throw error
     } catch (error: any) {
-      toast.error(error.message || `Failed to sign in with ${provider}`)
+      toast.error(error.message || `Failed to sign up with ${provider}`)
     }
   }
 
   return (
     <div className="max-w-md mx-auto mt-20 px-4">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold">Welcome Back</h1>
-        <p className="text-muted-foreground mt-2">Sign in to your account</p>
+        <h1 className="text-3xl font-bold">Create an Account</h1>
+        <p className="text-muted-foreground mt-2">Get started with your portfolio</p>
       </div>
 
       <div className="space-y-4">
         <Button 
           variant="outline" 
           className="w-full" 
-          onClick={() => handleOAuthSignIn('github')}
+          onClick={() => handleOAuthSignUp('github')}
         >
           <GithubIcon className="mr-2 h-4 w-4" />
           Continue with GitHub
@@ -74,7 +77,7 @@ export default function SignIn() {
         <Button 
           variant="outline" 
           className="w-full"
-          onClick={() => handleOAuthSignIn('google')}
+          onClick={() => handleOAuthSignUp('google')}
         >
           <Image 
             src="/google.svg" 
@@ -97,7 +100,7 @@ export default function SignIn() {
           </div>
         </div>
 
-        <form onSubmit={handleEmailSignIn} className="space-y-4">
+        <form onSubmit={handleEmailSignUp} className="space-y-4">
           <div>
             <Input
               type="email"
@@ -123,9 +126,16 @@ export default function SignIn() {
             className="w-full"
             disabled={isLoading}
           >
-            {isLoading ? 'Signing in...' : 'Sign in'}
+            {isLoading ? 'Creating account...' : 'Create account'}
           </Button>
         </form>
+
+        <p className="text-center text-sm text-muted-foreground">
+          Already have an account?{' '}
+          <Link href="/auth/signin" className="text-primary hover:underline">
+            Sign in
+          </Link>
+        </p>
       </div>
     </div>
   )
