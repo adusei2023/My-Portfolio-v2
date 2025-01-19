@@ -5,6 +5,9 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Github, Globe } from 'lucide-react'
 import Link from 'next/link'
+import type { Database } from '@/types/supabase'
+
+type Project = Database['public']['Tables']['projects']['Row']
 
 export default async function ProjectPage({ params }: { params: { id: string } }) {
   const supabase = createClient()
@@ -45,7 +48,7 @@ export default async function ProjectPage({ params }: { params: { id: string } }
           
           {project.tags && project.tags.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              {project.tags.map((tag) => (
+              {project.tags.map((tag: string) => (
                 <Badge key={tag} variant="secondary">
                   {tag}
                 </Badge>

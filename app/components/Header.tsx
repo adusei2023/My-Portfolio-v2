@@ -1,30 +1,34 @@
 'use client';
 
 import Link from 'next/link';
-import { useAuth } from '@/app/providers/AuthProvider';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/app/components/AuthProvider';
 
 export default function Header() {
-  const { user, isLoading } = useAuth();
+  const { user, loading } = useAuth();
 
   return (
     <header className="border-b">
-      <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-        <Link href="/" className="text-2xl font-bold">
+      <div className="container flex h-16 items-center justify-between">
+        <Link href="/" className="font-bold">
           Portfolio
         </Link>
-        
-        <nav>
-          {!isLoading && (
-            user ? (
-              <Link href="/dashboard">
-                <Button variant="outline">Dashboard</Button>
-              </Link>
-            ) : (
-              <Link href="/auth/signin">
-                <Button>Sign In</Button>
-              </Link>
-            )
+
+        <nav className="flex gap-4 items-center">
+          <Link href="/about">About</Link>
+          <Link href="/projects">Projects</Link>
+          <Link href="/contact">Contact</Link>
+          
+          {loading ? (
+            <div className="h-9 w-20 animate-pulse rounded bg-muted" />
+          ) : user ? (
+            <Button asChild variant="outline">
+              <Link href="/dashboard">Dashboard</Link>
+            </Button>
+          ) : (
+            <Button asChild>
+              <Link href="/auth/signin">Sign In</Link>
+            </Button>
           )}
         </nav>
       </div>

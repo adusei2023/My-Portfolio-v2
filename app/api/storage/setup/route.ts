@@ -1,7 +1,7 @@
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 
 export async function POST() {
   try {
@@ -48,23 +48,10 @@ export async function POST() {
         return NextResponse.json({ error: 'Failed to create bucket' }, { status: 500 })
       }
 
-      // Set up bucket policies
-      const { error: policyError } = await supabaseAdmin.query(`
-        create policy "Authenticated users can upload images"
-        on storage.objects for insert 
-        to authenticated 
-        with check (bucket_id = 'project-images');
-
-        create policy "Images are publicly accessible"
-        on storage.objects for select
-        to public
-        using (bucket_id = 'project-images');
-
-        create policy "Users can delete their own images"
-        on storage.objects for delete
-        to authenticated
-        using (bucket_id = 'project-images' and auth.uid() = owner);
-      `)
+      // Set up bucket policies using rpc
+      const { error: policyError } = await supabaseAdmin.rpc('setup_storage_policies', {
+        bucket_id: 'project-images'
+      })
 
       if (policyError) {
         console.error('Error setting policies:', policyError)
@@ -72,12 +59,9 @@ export async function POST() {
       }
     }
 
-    return NextResponse.json({ message: 'Storage configured successfully' })
+    return NextResponse.json({ message: 'Storage setup completed' })
   } catch (error) {
-    console.error('Error setting up storage:', error)
-    return NextResponse.json(
-      { error: 'Failed to configure storage' },
-      { status: 500 }
-    )
+    console.error('Error in storage setup:', error)
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 } 

@@ -9,42 +9,111 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      projects: {
+      profiles: {
         Row: {
           id: string
+          full_name: string | null
+          avatar_url: string | null
+          bio: string | null
           created_at: string
-          title: string
-          description: string | null
-          image_url: string | null
-          github_url: string | null
-          live_url: string | null
-          user_id: string
-          tags: string[] | null
+          updated_at: string
         }
         Insert: {
-          id?: string
+          id: string
+          full_name?: string | null
+          avatar_url?: string | null
+          bio?: string | null
           created_at?: string
-          title: string
-          description?: string | null
-          image_url?: string | null
-          github_url?: string | null
-          live_url?: string | null
-          user_id: string
-          tags?: string[] | null
+          updated_at?: string
         }
         Update: {
           id?: string
+          full_name?: string | null
+          avatar_url?: string | null
+          bio?: string | null
           created_at?: string
-          title?: string
-          description?: string | null
+          updated_at?: string
+        }
+      }
+      projects: {
+        Row: {
+          id: string
+          title: string
+          description: string
+          image_url: string | null
+          github_url: string | null
+          live_url: string | null
+          tags: string[]
+          featured: boolean
+          published: boolean
+          user_id: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description: string
           image_url?: string | null
           github_url?: string | null
           live_url?: string | null
+          tags?: string[]
+          featured?: boolean
+          published?: boolean
+          user_id: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string
+          image_url?: string | null
+          github_url?: string | null
+          live_url?: string | null
+          tags?: string[]
+          featured?: boolean
+          published?: boolean
           user_id?: string
-          tags?: string[] | null
+          created_at?: string
+          updated_at?: string
         }
       }
-      // Add other tables as needed
+      testimonials: {
+        Row: {
+          id: string
+          name: string
+          role: string | null
+          company: string | null
+          content: string
+          image_url: string | null
+          user_id: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          role?: string | null
+          company?: string | null
+          content: string
+          image_url?: string | null
+          user_id: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          role?: string | null
+          company?: string | null
+          content?: string
+          image_url?: string | null
+          user_id?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
   }
 } 
