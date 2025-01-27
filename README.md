@@ -1,5 +1,3 @@
-Here’s the updated README:
-
 Portfolio V2
 
 Welcome to the second version of my personal portfolio, designed to showcase my skills, projects, and experience as a developer. This portfolio reflects my growth and expertise in web development while emphasizing modern design and interactive features.
@@ -62,5 +60,3 @@ Experience Portfolio V2 live at Your Portfolio Link.
 
 🤝 Contact
 	•	Email: samuel.boateng01@yahoo.com, gloriaboateng2011@gmail.com
-
-Let me know if this works!
